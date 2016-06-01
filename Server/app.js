@@ -8,6 +8,8 @@ var express 		= require('express'),
 	stockChange 	= require('./js/stockChange.js'),
 	app 			= express();
 
+app.use(express.static('public'));
+
 updateJob.attemptUpdate();
 
 setInterval(function() {
@@ -34,4 +36,20 @@ app.get('/allItems', function(req, res) {
 app.get('/events', function(req, res) {
 	res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
 	res.end(fs.readFileSync('./data/events.json', 'utf-8'))
+});
+
+app.get('/resetEventsAndItems', function(req, res) {
+	fs.writeFileSync('./data/items.json', JSON.stringify([{"updateTime":0,"brand":"Palace","items":[]}, {"updateTime":0,"brand":"Supreme","items":[]}], 'utf-8'));
+	fs.writeFileSync('./data/events.json', JSON.stringify({"updateTime":0,"events":[]}, 'utf-8'));
+
+	res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
+	res.end('Deleted');
+});
+
+app.get('/forceRefreshItems', function(req, res) {
+	updateJob.runFullUpdate(function() {
+		analyser.analyse();
+		res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
+		res.end('Refreshed');
+	})
 });

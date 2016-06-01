@@ -89,6 +89,8 @@ function getItemInfo(url, callback) {
 						name: $('#details > h1').text() + ' ' + $('#details > p.style').text(),
 						price: $('#details > p.price > span:nth-child(1)').text(),
 						fullUrl: url,
+						smallImageUrl: $('#img-main')[0].src,
+						largeImageUrl: $('#zoom-holder')[0].src,
 						soldOut: !$('#add-remove-buttons > input')[0]
 					});
 				}

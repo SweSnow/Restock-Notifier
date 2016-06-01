@@ -10,6 +10,17 @@ exports.analyse = function() {
 	var newSupreme = JSON.parse(fs.readFileSync('./data/supremeItems.json', 'utf-8'));
 	var newItems = [newPalace, newSupreme];
 
+	if (!oldData || oldData.length == 0) {
+		oldData = [];
+		newItems.forEach(function(brand) {
+			oldData.push({
+				updateTime: 0,
+				brand: brand.brand,
+				items: []
+			});
+		});
+	}
+
 	var newEvents = [];
 
 	for (var k = 0; k < newItems.length; k++) {
@@ -24,6 +35,7 @@ exports.analyse = function() {
 						if (!items[i].soldOut && oldItems[j].soldOut) {
 							newEvents.push({
 								brand: newItems[k].brand,
+								brandUrl: getBrandUrl(newItems[k].brand),
 								item: items[i],
 								type: 'restock',
 								time: Date.now()
@@ -31,6 +43,7 @@ exports.analyse = function() {
 						} else if (!oldItems[j].price != !items[i].price) {
 							newEvents.push({
 								brand: newItems[k].brand,
+								brandUrl: getBrandUrl(newItems[k].brand),
 								item: items[i],
 								type: 'priceChange',
 								time: Date.now()
@@ -42,6 +55,8 @@ exports.analyse = function() {
 
 			if (!foundInOld) {
 				newEvents.push({
+					brand: newItems[k].brand,
+					brandUrl: getBrandUrl(newItems[k].brand),
 					item: items[i],
 					type: 'stock',
 					time: Date.now()
@@ -57,7 +72,17 @@ exports.analyse = function() {
 		console.log('ANALYSER: No difference found');
 	}
 
+	stockChange.updateSoldOutStatuses(newItems);
+
 	fs.writeFileSync('./data/items.json', JSON.stringify(newItems), 'utf-8');
 
 	console.log('ANALYSER: Finished');
+}
+
+function getBrandUrl(brand) {
+	switch (brand) {
+		case 'Palace': return '192.168.0.11:3000/images/palace.png'; break;
+		case 'Supreme': return '192.168.0.11:3000/images/supreme.png'; break;
+	}
+	return '';
 }

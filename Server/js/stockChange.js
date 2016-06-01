@@ -29,3 +29,22 @@ exports.newEvents = function(eventsIn) {
 
 	console.log('STOCK CHANGE: Finished');
 };
+
+exports.updateSoldOutStatuses = function(items) {
+	var oldData = JSON.parse(fs.readFileSync('./data/events.json', 'utf-8'));
+	if (!oldData || !oldData.events) {
+		return;
+	}
+
+	oldData.events.forEach(function(event) {
+		items.forEach(function(brandItemHolder) {
+			if (brandItemHolder.brand == event.item) {
+				brandItemHolder.items.forEach(function(item) {
+					if (event.item.name == item.name) {
+						event.item = item;
+					}
+				});
+			}
+		})
+	});
+}

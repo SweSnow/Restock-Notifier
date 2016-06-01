@@ -42,7 +42,7 @@ exports.runUpdate = function(callback) {
 	}).then(function(result) {
 		fs.writeFileSync('./data/palaceItems.json', JSON.stringify({
 			updateTime: Date.now(),
-			brand: 'Palace',
+			brand: Palace.BRAND_NAME,
 			items: result
 		}), 'utf-8');
 		console.log('PALACE: Finished')
@@ -99,7 +99,8 @@ function getItemsOnPage(url, callback) {
 					var items = [];
 					var loopChildren = $('#product-loop').children();
 
-					loopChildren.forEach(function(loopChild) {
+					for (var i = 0; i < loopChildren.length; i++) {
+						var loopChild = loopChildren[i];
 						new Promise(function(resolve, reject) {
 							var item = {};
 							var product = $(loopChild).children();
@@ -112,25 +113,25 @@ function getItemsOnPage(url, callback) {
 								item.price = $($($(product[1]).children())[1]).children()[0].innerHTML;
 							}
 
-							getLargeImage(item.fullUrl, function(imageUrls) {
+							getImages(item.fullUrl, function(imageUrls) {
 								item.smallImageUrl = imageUrls.small;
 								item.largeImageUrl = imageUrls.large;
 								resolve(item);
 							});
 						}).then(function(result) {
-							item.push(result);
+							items.push(result);
 							if (items.length == loopChildren.length) {
 								callback(items);
 							}
 						});
-					});
+					}
 				}
 			});
 		}
 	);
 }
 
-function getLargeImage(url, callback) {
+function getImages(url, callback) {
 	request({
 		uri: url,
 		encoding: 'utf-8'},
@@ -147,7 +148,7 @@ function getLargeImage(url, callback) {
 					
 					callback({
 						large: $('.bigimage').children()[0].src,
-						small: $('#product-photos > div.photos-grid.clearfix > a:nth-child(1) > img').src.replace('_medium.jpg', '_large.jpg')
+						small: $('#product-photos > div.photos-grid.clearfix > a:nth-child(1) > img')[0].src.replace('_medium.jpg', '_large.jpg')
 					});
 				}
 			});
