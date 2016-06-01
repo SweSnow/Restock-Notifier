@@ -28,7 +28,7 @@ exports.analyse = function() {
 								type: 'restock',
 								time: Date.now()
 							});
-						} else if (!oldItems[j].soldOut && !items[i].soldOut) {
+						} else if (!oldItems[j].price != !items[i].price) {
 							newEvents.push({
 								brand: newItems[k].brand,
 								item: items[i],

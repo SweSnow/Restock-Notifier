@@ -96,25 +96,59 @@ function getItemsOnPage(url, callback) {
 				scripts: ['http://code.jquery.com/jquery-1.6.min.js'],
 				done: function (err, window) {
 					var $ = window.jQuery;
-
 					var items = [];
-
 					var loopChildren = $('#product-loop').children();
-					for (var i = 0; i < loopChildren.length; i++) {
-						var item = {};
-						var product = $(loopChildren[i]).children();
 
-						item.fullUrl = Palace.BASE_URL + product[0].href;
-						item.name = $($($(product[1]).children())[0]).children()[0].innerHTML;
+					loopChildren.forEach(function(loopChild) {
+						new Promise(function(resolve, reject) {
+							var item = {};
+							var product = $(loopChild).children();
 
-						item.soldOut = $($(product[1]).children())[1].innerHTML.trim() == Palace.SOLD_OUT;
-						if (!item.soldOut) {
-							item.price = $($($(product[1]).children())[1]).children()[0].innerHTML;
-						}
+							item.fullUrl = Palace.BASE_URL + product[0].href;
+							item.name = $($($(product[1]).children())[0]).children()[0].innerHTML;
 
-						items.push(item);
-					}
-					callback(items);
+							item.soldOut = $($(product[1]).children())[1].innerHTML.trim() == Palace.SOLD_OUT;
+							if (!item.soldOut) {
+								item.price = $($($(product[1]).children())[1]).children()[0].innerHTML;
+							}
+
+							getLargeImage(item.fullUrl, function(imageUrls) {
+								item.smallImageUrl = imageUrls.small;
+								item.largeImageUrl = imageUrls.large;
+								resolve(item);
+							});
+						}).then(function(result) {
+							item.push(result);
+							if (items.length == loopChildren.length) {
+								callback(items);
+							}
+						});
+					});
+				}
+			});
+		}
+	);
+}
+
+function getLargeImage(url, callback) {
+	request({
+		uri: url,
+		encoding: 'utf-8'},
+		function(err, response, body) {
+			if (err && response.statusCode !== 200) {
+				console.log('PALACE: Request error at URL ' + url);
+			}
+
+			jsdom.env({
+				html: body,
+				scripts: ['http://code.jquery.com/jquery-1.6.min.js'],
+				done: function (err, window) {
+					var $ = window.jQuery;
+					
+					callback({
+						large: $('.bigimage').children()[0].src,
+						small: $('#product-photos > div.photos-grid.clearfix > a:nth-child(1) > img').src.replace('_medium.jpg', '_large.jpg')
+					});
 				}
 			});
 		}

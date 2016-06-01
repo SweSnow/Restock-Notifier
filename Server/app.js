@@ -11,7 +11,7 @@ var express 		= require('express'),
 updateJob.attemptUpdate();
 
 setInterval(function() {
-	updateJob.attemptUpdate();
+	//updateJob.attemptUpdate();
 }, 5 * 60 * 1000);
 
 app.listen(3000);
