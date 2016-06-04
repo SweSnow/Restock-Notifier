@@ -18,6 +18,18 @@ setInterval(function() {
 
 app.listen(3000);
 
+// var fileMap = {
+// 	'supreme': '/data/supremeItems.json',
+// 	'palace': '/data/palaceItems.json',
+// };
+// app.get('/items/:store', function(req, res) {
+// 	var store = req.params.store;
+// 	res.sendFile(__dirname + fileMap[store]);
+// });
+// app.get('/items', function(req, res) {
+// 	res.sendFile(__dirname + '/data/items.json');
+// });
+
 app.get('/palaceItems', function(req, res) {
 	res.writeHead(200, {'Content-Type': 'text/plain; charset=utf8'});
 	res.end(fs.readFileSync('./data/supremeItems.json', 'utf-8'))

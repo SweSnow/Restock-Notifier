@@ -9,6 +9,22 @@ var Supreme = {
 	ADD_TO_BASKET: 'add to basket'
 };
 
+// getSupreme: () -> Promise
+// Promise.all([getSupreme(), getPalace()]).then(function(values) {
+// 	var supreme = values[0];
+// 	var palace = values[1];
+// });
+
+// var promises = items.map(x => new Promise((resolve) => resolve()))
+// Promise.all(promises).then((values) => )
+
+// Promise.all(items.map(function(item) {
+// 	return new Promise(function(resolve) {
+// 		resolve();
+// 	});
+// }))
+// .then()
+
 exports.runUpdate = function(callback) {
 	new Promise(function(supremeResolve, supremeReject) {
 		console.log('SUPREME: Started');

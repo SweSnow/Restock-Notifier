@@ -99,6 +99,14 @@ function getItemsOnPage(url, callback) {
 					var items = [];
 					var loopChildren = $('#product-loop').children();
 
+					// $('#product-loop').each(function(product) {
+
+					// 	var link = $(product).find('a')
+
+
+
+					// });
+
 					for (var i = 0; i < loopChildren.length; i++) {
 						var loopChild = loopChildren[i];
 						new Promise(function(resolve, reject) {
